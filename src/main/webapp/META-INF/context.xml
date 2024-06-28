@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/">
+    <Resource
+            auth="Container"
+            driverClassName = "oracle.jdbc.driver.OracleDriver"
+            url = "jdbc:oracle:thin:@localhost:1521:xe"
+            username = "JSP"
+            password = "JSP"
+            name = "jdbc/oracle"
+            type = "javax.sql.DataSource"
+            maxActive = "300"
+            maxWait = "1000"
+    />
+    <!--<Resource
+            auth="Container"
+            driverClassName = "oracle.jdbc.OracleDriver"
+            url = "jdbc:oracle:thin:@localhost:1521:xe"
+            username = "HR"
+            password = "HR"
+            name = "jdbc/oracle"
+            type = "javax.sql.DataSource"
+            maxActive = "300"
+            maxWait = "1000"
+    />-->
+</Context>
