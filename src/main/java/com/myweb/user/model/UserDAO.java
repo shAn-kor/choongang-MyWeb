@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class UserDAO {
@@ -83,39 +84,66 @@ public class UserDAO {
         }
     }
 
-    public UserDTO login(String id, String pw) {
-        UserDTO dto = null;
-        String sql = "select * from users where id=? and pw=?";
-
+    public int updateUser(UserDTO dto) {
+        String sql = "UPDATE USERS SET pw = ?, name = ?, email = ?, gender = ? WHERE id = ?";
         Connection conn = null;
         PreparedStatement ps = null;
-        ResultSet rs = null;
+        int result = 0;
+
+        try {
+            conn = ds.getConnection();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, dto.getPw());
+            ps.setString(2, dto.getName());
+            ps.setString(3, dto.getEmail());
+            ps.setString(4, dto.getGender());
+            ps.setString(5, dto.getId());
+
+            result = ps.executeUpdate(); // 반환 결과 성공 : 1, 실패 : 0
+
+            System.out.println(result);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            JdbcUtil.close(conn, ps);
+        }
+        return result;
+    }
+
+    public void deleteUser(String id) {
+        String sql = "DELETE FROM USERS WHERE id = ?";
+        Connection conn = null;
+        PreparedStatement ps = null;
 
         try {
             conn = ds.getConnection();
             ps = conn.prepareStatement(sql);
             ps.setString(1, id);
-            ps.setString(2, pw);
-            rs = ps.executeQuery();
 
-            if (rs.next()) {
-                String name = rs.getString("name");
-                String email = rs.getString("email");
-                String gender = rs.getString("gender");
-                dto = new UserDTO(id, null, name, email, gender, null);
-            }
+            ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
-            JdbcUtil.close(conn, ps, rs);
+            JdbcUtil.close(conn, ps);
         }
-        return dto;
+    }
+
+    public UserDTO login(String id, String pw) {
+        String sql = "select * from users where id=? and pw=?";
+        List<String> params = new ArrayList<>();
+        params.add(id);
+        params.add(pw);
+        return getDTOBySql(sql, params);
     }
 
     public UserDTO getUser(String id) {
-        UserDTO dto = null;
-
+        List<String> params = new ArrayList<>();
+        params.add(id);
         String sql = "select * from users where id=?";
+        return getDTOBySql(sql, params);
+    }
+
+    private UserDTO getDTOBySql (String sql, List<String> params) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -123,14 +151,20 @@ public class UserDAO {
         try {
             conn = ds.getConnection();
             ps = conn.prepareStatement(sql);
-            ps.setString(1, id);
+            for (int i = 1; i <= params.size(); i++) {
+                ps.setString(i, params.get(i - 1));
+            }
             rs = ps.executeQuery();
 
             if (rs.next()) {
+                String id = rs.getString("id");
+                String pw = rs.getString("pw");
                 String name = rs.getString("name");
                 String email = rs.getString("email");
                 String gender = rs.getString("gender");
-                dto = new UserDTO(id, null, name, email, gender, null);
+                Timestamp regdate = rs.getTimestamp("regdate");
+
+                return new UserDTO(id, null, name, email, gender, regdate);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -138,6 +172,6 @@ public class UserDAO {
             JdbcUtil.close(conn, ps, rs);
         }
 
-        return dto;
+        return null;
     }
 }

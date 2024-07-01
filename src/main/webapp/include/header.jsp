@@ -71,7 +71,7 @@
                     <a href="${pageContext.request.contextPath}/member/member.jsp">Member</a>
                 </li>
                 <li>
-                    <a href="">BOARD</a>
+                    <a href="${pageContext.request.contextPath}/board/list.board">BOARD</a>
                 </li>
                 <c:choose >
                     <c:when test="${sessionScope.user_id==null}">
@@ -87,7 +87,7 @@
                             <a href="${pageContext.request.contextPath}/user/logout.user">LOGOUT</a>
                         </li>
                         <li>
-                            <a href="${pageContext.request.contextPath}/user/mypage.user" style="color:red">MYPAGE</a>
+                            <a href="${pageContext.request.contextPath}/user/myPage.user" style="color:red">MYPAGE</a>
                         </li>
                     </c:otherwise>
                 </c:choose>

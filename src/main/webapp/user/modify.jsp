@@ -12,7 +12,7 @@
     <div align="center">
         <h3>회원정보 관리</h3>
         <hr/>
-        <form action="" method="post">
+        <form action="update.user" method="post">
             <table>
                 <tr>
                     <td>ID  </td>
@@ -33,13 +33,14 @@
                 <tr>
                     <td>성별  </td>
                     <td>
-                        <input type="radio" name="gender" value="M" checked="checked">남자
-                        <input type="radio" name="gender" value="W">여자
+                        <input type="radio" name="gender" value="M" ${requestScope.user_gender eq "M" ? 'checked' : null}>남자
+                        <input type="radio" name="gender" value="W" ${requestScope.user_gender eq "W" ? 'checked' : null}>여자
+                        <% System.out.println(request.getAttribute("user_gender")); %>
                     </td>
                 </tr>
             </table>
             <br>
-            <input type="submit" value="수정" onclick="location.href='join.user'">
+            <input type="submit" value="수정">
             <input type="button" value="취소" onclick="location.href='myPage.user'"> <%--location.href : 자바스크립트의 리다이렉트--%>
         </form>
     </div>

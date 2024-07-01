@@ -10,4 +10,6 @@ public interface UserService {
     void join(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException;
     void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException;
     void getInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException;
+    void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException;
+    void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException;
 }

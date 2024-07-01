@@ -77,4 +77,63 @@ public class UserServiceImpl implements UserService{
         req.getRequestDispatcher("modify.jsp").forward(req, resp);
         // 5. 회원정보를 input 태그에 미리 출력해주면 된다.
     }
+
+    @Override
+    public void update(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 클라이언트 값 받기
+        String id = req.getParameter("id");
+        String pw = req.getParameter("pw");
+        String name = req.getParameter("name");
+        String email = req.getParameter("email");
+        String gender = req.getParameter("gender");
+
+        int result = dao.updateUser(new UserDTO(id,pw,name,email,gender, null));
+
+        if (result > 0) {
+            // java에서 알림창 화면에 보내기
+            // out 객체 - client 로 출력
+            HttpSession session = req.getSession();
+            session.setAttribute("user_name", name);
+            resp.setContentType("text/html;charset=utf-8");
+            PrintWriter out = resp.getWriter();
+            out.println("<script>");
+            out.println("alert('회원정보 정상 수정');");
+            out.println("location.href='myPage.user';");
+            out.println("</script>");
+
+        } else {
+            // user 페이지로 이동
+            resp.setContentType("text/html;charset=utf-8");
+            PrintWriter out = resp.getWriter(); // mvc2 에서는 리다이렉트가 컨트롤러의 경로가 된다.
+
+            out.println("<script>");
+            out.println("alert('회원정보 수정 실패');");
+            out.println("location.href='myPage.user';");
+            out.println("</script>");
+        }
+    }
+
+    @Override
+    public void delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        /*
+        1. 화면에서 넘어오는 pw 값 받기
+        2. 회원탈퇴는 비밀번호 일치 확인 후 탈퇴 진행,
+            => login 메서드 재활용
+        3. login 메서드가 1을 반환하면, dao.delete()로 회원 삭제 진행
+        4. 삭제 성공 시 "홈 화면" redirect 하며 세션 전부 삭제
+            , 비밀번호 틀리면 delete.jsp 에 "비밀번호를 확인하세요" 메시지 남긴다.
+         */
+        HttpSession session = req.getSession();
+        String id = (String)session.getAttribute("user_id");
+        String pw = req.getParameter("pw");
+
+        if (dao.login(id, pw) != null) {
+            dao.deleteUser(id);
+            session.invalidate();
+            resp.sendRedirect("/MyWeb");
+        } else {
+            req.setAttribute("msg", "비밀번호를 확인하세요");
+            req.getRequestDispatcher("delete.jsp").forward(req, resp);
+        }
+    }
 }

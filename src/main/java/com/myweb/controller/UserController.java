@@ -42,35 +42,39 @@ public class UserController extends HttpServlet {
         if (command.equals("/user/join.user")) {
             req.getRequestDispatcher("join.jsp").forward(req, resp);
         }
-
         if (command.equals("/user/joinForm.user")) { // 회원가입 기능
             service = new UserServiceImpl();
             service.join(req, resp);
         }
-
         if (command.equals("/user/login.user")) { // 로그인 페이지
             req.getRequestDispatcher("login.jsp").forward(req, resp);
         }
-
         if (command.equals("/user/loginForm.user")) { // 로그인 요청
             service = new UserServiceImpl();
             service.login(req, resp);
         }
-
         if (command.equals("/user/myPage.user")) { // 회원페이지
             req.getRequestDispatcher("myPage.jsp").forward(req, resp);
         }
-
         if (command.equals("/user/modify.user")) { // 회원 정보 수정 페이지
             service = new UserServiceImpl();
             service.getInfo(req, resp);
         }
-
-        if (command.equals("/user/logout.user")) {
+        if (command.equals("/user/logout.user")) { // 로그아웃
             HttpSession session = req.getSession();
             session.invalidate();
-
             resp.sendRedirect(req.getContextPath() + "/index.jsp"); // 메인 화면으로
+        }
+        if (command.equals("/user/update.user")) { // 회원정보 수정
+            new UserServiceImpl().update(req, resp);
+        }
+        if (command.equals("/user/delete.user")) { // 회원 탈퇴
+            // mvc2는 기본 이동이 forward
+            req.setAttribute("msg", "비밀번호를 입력하세요");
+            req.getRequestDispatcher("delete.jsp").forward(req, resp);
+        }
+        if (command.equals("/user/deleteForm.user")) {
+            new UserServiceImpl().delete(req, resp);
         }
     }
 }
